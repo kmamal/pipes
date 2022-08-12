@@ -13,9 +13,36 @@
   },
   "license": "MIT",
   "dependencies": {
+    "@kmamal/async": "^0.0.1",
     "@kmamal/util": "^0.1.0"
   },
   "devDependencies": {
     "@kmamal/testing": "^0.0.20"
+  },
+  "exports": {
+    "./node": "./src/node.js",
+    "./": "./src/index.js",
+    "./operators/reduce": "./src/operators/reduce.js",
+    "./operators/transform": "./src/operators/transform.js",
+    "./operators/filter": "./src/operators/filter.js",
+    "./operators": "./src/operators/index.js",
+    "./operators/last": "./src/operators/last.js",
+    "./operators/buffer": "./src/operators/buffer.js",
+    "./operators/first": "./src/operators/first.js",
+    "./operators/map": "./src/operators/map.js",
+    "./operators/eager": "./src/operators/eager.js",
+    "./operators/debug": "./src/operators/debug.js",
+    "./operators/tap": "./src/operators/tap.js",
+    "./operators/scan": "./src/operators/scan.js",
+    "./pipeline": "./src/pipeline.js",
+    "./sinks/to-iterable": "./src/sinks/to-iterable.js",
+    "./sinks": "./src/sinks/index.js",
+    "./sinks/to-promise": "./src/sinks/to-promise.js",
+    "./sinks/tee": "./src/sinks/tee.js",
+    "./sources": "./src/sources/index.js",
+    "./sources/timer": "./src/sources/timer.js",
+    "./sources/concat": "./src/sources/concat.js",
+    "./sources/from-iterable": "./src/sources/from-iterable.js",
+    "./sources/empty": "./src/sources/empty.js"
   }
 }

@@ -38,12 +38,15 @@ class IterableSinkNode extends Node {
 
 	async * [Symbol.asyncIterator] () {
 		await this.open()
-		for (;;) {
-			const { done, value: data } = await this._getNext()
-			if (done) { break }
-			Array.isArray(data) ? yield* data : yield data
+		try {
+			for (;;) {
+				const { done, value: data } = await this._getNext()
+				if (done) { break }
+				Array.isArray(data) ? yield* data : yield data
+			}
+		} finally {
+			await this.close()
 		}
-		await this.close()
 	}
 }
 

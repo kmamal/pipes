@@ -10,5 +10,6 @@ module.exports = {
 	...sinks,
 	...sources,
 	...require('./node'),
+	...require('./pipe'),
 	...require('./pipeline'),
 }

@@ -11,11 +11,19 @@ class SplitOperatorNode extends Node {
 		await this._propagateWrite([ this._buffer ])
 	}
 
+	async [SYM.kReadHook] () {
+		await this._propagateRead(4096)
+	}
+
 	async [SYM.kWriteHook] (data) {
 		this._buffer += data
 		const parts = this._buffer.split(this._pattern)
 		this._buffer = parts.pop()
-		await this._propagateWrite(parts)
+		if (parts.length === 0) {
+			await this._propagateRead(4096)
+		} else {
+			await this._propagateWrite(parts)
+		}
 	}
 }
 

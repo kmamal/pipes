@@ -1,7 +1,7 @@
 const { Node, SYM } = require('../node')
 const Fs = require('fs')
 
-class ReadFileSinkNode extends Node {
+class ReadFileSourceNode extends Node {
 	constructor (path, options) {
 		super()
 		this._path = path
@@ -42,9 +42,9 @@ class ReadFileSinkNode extends Node {
 	}
 }
 
-const readFile = (path, options) => new ReadFileSinkNode(path, options)
+const readFile = (path, options) => new ReadFileSourceNode(path, options)
 
 module.exports = {
-	ReadFileSinkNode,
+	ReadFileSourceNode,
 	readFile,
 }

@@ -6,42 +6,50 @@
     "type": "git",
     "url": "git@github.com:kmamal/pipes.git"
   },
-  "main": "src/index.js",
   "scripts": {
     "test": "./scripts/run-tests.sh",
-    "update-exports": "./scripts/update-exports.sh"
+    "update-exports": "node ./scripts/update-exports.mjs"
   },
   "license": "MIT",
   "dependencies": {
-    "@kmamal/async": "^0.0.1",
-    "@kmamal/util": "^0.1.0"
+    "@kmamal/async": "^0.0.3",
+    "@kmamal/util": "^0.1.11"
   },
   "devDependencies": {
-    "@kmamal/testing": "^0.0.20"
+    "@kmamal/testing": "^0.0.21"
   },
+  "main": "./src/index.js",
   "exports": {
+    "./pipe": "./src/pipe.js",
     "./node": "./src/node.js",
-    "./": "./src/index.js",
+    ".": "./src/index.js",
+    "./make-connections": "./src/make-connections.js",
     "./operators/reduce": "./src/operators/reduce.js",
     "./operators/transform": "./src/operators/transform.js",
     "./operators/filter": "./src/operators/filter.js",
+    "./operators/split": "./src/operators/split.js",
     "./operators": "./src/operators/index.js",
     "./operators/last": "./src/operators/last.js",
     "./operators/buffer": "./src/operators/buffer.js",
     "./operators/first": "./src/operators/first.js",
     "./operators/map": "./src/operators/map.js",
+    "./operators/count": "./src/operators/count.js",
     "./operators/eager": "./src/operators/eager.js",
     "./operators/debug": "./src/operators/debug.js",
+    "./operators/collect": "./src/operators/collect.js",
     "./operators/tap": "./src/operators/tap.js",
     "./operators/scan": "./src/operators/scan.js",
     "./pipeline": "./src/pipeline.js",
     "./sinks/to-iterable": "./src/sinks/to-iterable.js",
     "./sinks": "./src/sinks/index.js",
+    "./sinks/write-file": "./src/sinks/write-file.js",
     "./sinks/to-promise": "./src/sinks/to-promise.js",
     "./sinks/tee": "./src/sinks/tee.js",
+    "./sources/from-string": "./src/sources/from-string.js",
     "./sources": "./src/sources/index.js",
     "./sources/timer": "./src/sources/timer.js",
     "./sources/concat": "./src/sources/concat.js",
+    "./sources/read-file": "./src/sources/read-file.js",
     "./sources/from-iterable": "./src/sources/from-iterable.js",
     "./sources/empty": "./src/sources/empty.js"
   }

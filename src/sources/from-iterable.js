@@ -17,6 +17,10 @@ class IterableSourceNode extends Node {
 		this._iterator.return?.()
 	}
 
+	[SYM.kErrorHook] (error) {
+		this._iterator.throw?.(error)
+	}
+
 	async [SYM.kReadHook] (n) {
 		const values = new Array(n)
 		let done
@@ -31,7 +35,7 @@ class IterableSourceNode extends Node {
 			values[i] = value
 		}
 
-		if (values.length > 0) { await this._propagateWrite(values) }
+		await this._propagateWrite(values)
 		if (done) { await this.close() }
 	}
 }

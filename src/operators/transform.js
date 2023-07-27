@@ -1,6 +1,6 @@
 const { Node, SYM } = require('../node')
 
-class TransformNode extends Node {
+class TransformOperatorNode extends Node {
 	constructor (fnTransform) {
 		super()
 		this._fnTransform = fnTransform
@@ -9,15 +9,15 @@ class TransformNode extends Node {
 	async [SYM.kWriteHook] (data) {
 		const { length } = data
 		const transformed = this._fnTransform(data)
-		this.read(length - transformed.length)
 		await this._propagateWrite(transformed)
+		if (data.length === 0) { this._propagateRead(length) }
 	}
 }
 
 const transform = (fnTransform) =>
-	(src) => src.pipe(new TransformNode(fnTransform))
+	(src) => src.pipe(new TransformOperatorNode(fnTransform))
 
 module.exports = {
-	TransformNode,
+	TransformOperatorNode,
 	transform,
 }

@@ -1,13 +1,13 @@
 const { Node, SYM } = require('../node')
-const _ = require('@kmamal/util')
+const { sleep } = require('@kmamal/util/promise/sleep')
 
-class EmptyNode extends Node {
-	[SYM.kOpenHook] () { _.sleep(0).then(() => { this.close() }) }
+class EmptySourceNode extends Node {
+	[SYM.kOpenHook] () { sleep(0).then(() => { this.close() }) }
 }
 
-const empty = () => new EmptyNode()
+const empty = () => new EmptySourceNode()
 
 module.exports = {
-	EmptyNode,
+	EmptySourceNode,
 	empty,
 }

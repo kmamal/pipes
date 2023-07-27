@@ -1,13 +1,14 @@
 const { test } = require('@kmamal/testing')
-const { map } = require('./map')
-const { collect } = require('./collect')
+const { first } = require('./first')
+const { debug } = require('./debug')
 const { fromIterable } = require('../sources/from-iterable')
 const { pipeline } = require('../pipeline')
 
-test("operators.map", async (t) => {
+test("operators.first", async (t) => {
 	t.equal(await pipeline([
 		fromIterable([ 1, 2, 3 ]),
-		map((x) => 2 * x),
-		collect(),
-	]), [ 2, 4, 6 ])
+		debug("b"),
+		first(),
+		debug("a"),
+	]), 1)
 })

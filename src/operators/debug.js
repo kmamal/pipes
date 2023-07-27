@@ -1,6 +1,6 @@
 const { Node } = require('../node')
 
-class DebugNode extends Node {
+class DebugOperatorNode extends Node {
 	constructor (name) {
 		super()
 		this._name = name
@@ -18,7 +18,12 @@ class DebugNode extends Node {
 
 	async _openFrom (from) {
 		console.log(`[${this._name}] open`)
-		await super.open(from)
+		await super._openFrom(from)
+	}
+
+	async _closeFrom (from) {
+		console.log(`[${this._name}] close`)
+		await super._closeFrom(from)
 	}
 
 	async _doError (error) {
@@ -48,9 +53,9 @@ class DebugNode extends Node {
 }
 
 const debug = (name) =>
-	(src) => src.pipe(new DebugNode(name))
+	(src) => src.pipe(new DebugOperatorNode(name))
 
 module.exports = {
-	DebugNode,
+	DebugOperatorNode,
 	debug,
 }

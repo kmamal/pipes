@@ -1,25 +1,31 @@
 const { Node, SYM } = require('../node')
+const { pipe } = require('../pipe')
+const { EagerOperatorNode } = require('./eager')
 
-class LastNode extends Node {
+class LastOperatorNode extends Node {
 	constructor () {
 		super()
-		this._lastValue = undefined
+		this._lastData = undefined
 	}
 
 	async [SYM.kCloseHook] () {
-		if (this._lastValue !== undefined) {
-			await this.write(this._lastValue)
+		if (this._lastData !== undefined) {
+			await this._propagateWrite(this._lastData)
 		}
 	}
 
 	[SYM.kWriteHook] (data) {
-		this._lastValue = Array.isArray(data) ? data.slice(-1) : data
+		this._lastData = Array.isArray(data) ? data.slice(-1) : data
 	}
 }
 
-const last = (src) => src.pipe(new LastNode())
+const last = () => (src) => pipe([
+	src,
+	new EagerOperatorNode(),
+	new LastOperatorNode(),
+])
 
 module.exports = {
-	LastNode,
+	LastOperatorNode,
 	last,
 }

@@ -1,7 +1,9 @@
 const { Node, SYM } = require('../node')
-const _ = require('@kmamal/util')
+const { pipe } = require('../pipe')
+const { EagerOperatorNode } = require('./eager')
+const { reduce: reduceArray } = require('@kmamal/util/array/reduce')
 
-class ReduceNode extends Node {
+class ReduceOperatorNode extends Node {
 	constructor (fnReduce, initial) {
 		super()
 		this._fnReduce = fnReduce
@@ -15,14 +17,19 @@ class ReduceNode extends Node {
 	}
 
 	[SYM.kWriteHook] (data) {
-		this._acc = _.reduce(data, this._fnReduce, this._acc)
+		this._acc = reduceArray(data, this._fnReduce, this._acc)
 	}
 }
 
 const reduce = (fnReduce, initial) =>
-	(src) => src.pipe(new ReduceNode(fnReduce, initial))
+	(src) => pipe([
+		src,
+		new EagerOperatorNode(),
+		new ReduceOperatorNode(fnReduce, initial),
+	])
+
 
 module.exports = {
-	ReduceNode,
+	ReduceOperatorNode,
 	reduce,
 }

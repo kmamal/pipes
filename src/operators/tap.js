@@ -1,21 +1,25 @@
 const { Node, SYM } = require('../node')
 
-class TapNode extends Node {
+class TapOperatorNode extends Node {
 	constructor (fnTap) {
 		super()
 		this._fnTap = fnTap
 	}
 
 	async [SYM.kWriteHook] (data) {
-		for (const x of data) { this._fnTap(x) }
+		if (Array.isArray(data)) {
+			for (const x of data) { this._fnTap(x) }
+		} else {
+			this._fnTap(data)
+		}
 		await this._propagateWrite(data)
 	}
 }
 
 const tap = (fnTap) =>
-	(src) => src.pipe(new TapNode(fnTap))
+	(src) => src.pipe(new TapOperatorNode(fnTap))
 
 module.exports = {
-	TapNode,
+	TapOperatorNode,
 	tap,
 }

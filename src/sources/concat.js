@@ -1,7 +1,7 @@
 const { Node, SYM } = require('../node')
 const { EmptyNode } = require('./empty')
 
-class ConcatNode extends Node {
+class ConcatSourceNode extends Node {
 	constructor (nodes) {
 		if (nodes.length === 0) { return new EmptyNode() }
 		super()
@@ -29,9 +29,9 @@ class ConcatNode extends Node {
 	}
 }
 
-const concat = (nodes) => new ConcatNode(nodes)
+const concat = (nodes) => new ConcatSourceNode(nodes)
 
 module.exports = {
-	ConcatNode,
+	ConcatSourceNode,
 	concat,
 }

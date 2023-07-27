@@ -1,10 +1,11 @@
 const EventEmitter = require('events')
+const { Future } = require('@kmamal/async/future')
 
 const kState = Symbol("state")
 const kError = Symbol("error")
 const kSrc = Symbol("src")
 const kDst = Symbol("dst")
-const kCanWrite = Symbol("can write")
+const kOpenPromise = Symbol("open promise")
 const kWritePromise = Symbol("write promise")
 const kReadPromise = Symbol("read promise")
 const kOpenHook = Symbol("open hook")
@@ -21,7 +22,6 @@ class Node extends EventEmitter {
 		this[kError] = null
 		this[kSrc] = null
 		this[kDst] = null
-		this[kCanWrite] = true
 		this[kWritePromise] = Promise.resolve()
 		this[kReadPromise] = Promise.resolve()
 
@@ -34,7 +34,6 @@ class Node extends EventEmitter {
 	}
 
 	async pipe (node) {
-		if (this[kError]) { return node }
 		this[kDst] = node
 		node[kSrc] = this
 		if (false
@@ -45,7 +44,6 @@ class Node extends EventEmitter {
 	}
 
 	unpipe () {
-		if (this[kError]) { return this }
 		const dst = this[kDst]
 		if (dst) {
 			this[kDst] = null
@@ -65,13 +63,18 @@ class Node extends EventEmitter {
 	}
 
 	async _openFrom (from) {
-		await this._propagateOpenDownstream(from)
-		if (!this[kError] && this[kState] === 'closed') {
-			this[kState] = 'opening'
-			await this[kOpenHook]?.(from)
-			this[kState] = 'opened'
-		}
-		await this._propagateOpenUpstream(from)
+		if (this[kState] !== 'closed') { return }
+		this[kError] = null
+		this[kState] = 'opening'
+		const future = new Future()
+		this[kOpenPromise] = future.promise()
+		await Promise.all([
+			this._propagateOpenDownstream(from),
+			this[kOpenHook]?.(from),
+			this._propagateOpenUpstream(from),
+		])
+		future.resolve()
+		this[kState] = 'opened'
 	}
 
 	async open () {
@@ -80,11 +83,13 @@ class Node extends EventEmitter {
 
 	async _propagateCloseUpstream (from) {
 		if (!this[kSrc] || this[kSrc] === from) { return }
+		await this[kReadPromise]
 		await this[kSrc]._closeFrom(this)
 	}
 
 	async _propagateCloseDownstream (from) {
 		if (!this[kDst] || this[kDst] === from) { return }
+		await this[kWritePromise]
 		await this[kDst]._closeFrom(this)
 	}
 
@@ -120,25 +125,37 @@ class Node extends EventEmitter {
 		await this._propagateError(error)
 	}
 
-	_propagateRead (n) {
+	async _propagateRead (n) {
 		if (n <= 0) { return }
-		this[kSrc]?.read(n)
-	}
-
-	[kReadHook] (n) {
-		this._propagateRead(n)
-	}
-
-	read (n) {
-		if (n <= 0) { return }
-		if (this[kError] || this[kState] !== 'opened') { return }
+		if (this[kState] === 'opening') { await this[kOpenPromise] }
 		this[kReadPromise] = this[kReadPromise].then(async () => {
-			await this[kReadHook](n)
+			await this[kSrc]?.read(n)
 		})
+		await this._readPromise
+	}
+
+	async [kReadHook] (n) {
+		await this._propagateRead(n)
+	}
+
+	async read (n) {
+		if (n <= 0) { return }
+		if (false
+			|| this[kError]
+			|| this[kState] === 'closed'
+			|| this[kState] === 'closing'
+		) { return }
+
+		if (this[kState] === 'opening') { await this[kOpenPromise] }
+
+		await (this[kReadPromise] = this[kReadPromise].then(async () => {
+			await this[kReadHook](n)
+		}))
 	}
 
 	async _propagateWrite (data) {
 		if (data.length === 0) { return }
+		if (this[kState] === 'opening') { await this[kOpenPromise] }
 		this[kWritePromise] = this[kWritePromise].then(async () => {
 			await this[kDst]?.write(data)
 		})
@@ -151,12 +168,15 @@ class Node extends EventEmitter {
 
 	async write (data) {
 		if (data.length === 0) { return }
-		if (this[kError] || this[kState] !== 'opened') { return }
+		if (false
+			|| this[kError]
+			|| this[kState] === 'closed'
+			|| this[kState] === 'closing'
+		) { return }
 
-		if (!this[kCanWrite]) { this.error(new Error("bad write")) }
-		this[kCanWrite] = false
-		await this[kWriteHook](data)
-		this[kCanWrite] = true
+		await (this[kWritePromise] = this[kWritePromise].then(async () => {
+			await this[kWriteHook](data)
+		}))
 	}
 }
 
@@ -167,7 +187,6 @@ module.exports = {
 		kError,
 		kSrc,
 		kDst,
-		kCanWrite,
 		kWritePromise,
 		kReadPromise,
 		kOpenHook,

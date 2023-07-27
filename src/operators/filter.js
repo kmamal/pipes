@@ -1,7 +1,7 @@
 const { Node, SYM } = require('../node')
-const _ = require('@kmamal/util')
+const { filter: filterArray } = require('@kmamal/util/array/filter')
 
-class FilterNode extends Node {
+class FilterOperatorNode extends Node {
 	constructor (fnFilter) {
 		super()
 		this._fnFilter = fnFilter
@@ -9,16 +9,16 @@ class FilterNode extends Node {
 
 	async [SYM.kWriteHook] (data) {
 		const { length } = data
-		_.filter.$$$(data, this._fnFilter)
-		this.read(length - data.length)
+		filterArray.$$$(data, this._fnFilter)
 		await this._propagateWrite(data)
+		if (data.length === 0) { this._propagateRead(length) }
 	}
 }
 
 const filter = (fnFilter) =>
-	(src) => src.pipe(new FilterNode(fnFilter))
+	(src) => src.pipe(new FilterOperatorNode(fnFilter))
 
 module.exports = {
-	FilterNode,
+	FilterOperatorNode,
 	filter,
 }

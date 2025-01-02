@@ -1,8 +1,31 @@
 const { reduce } = require('./reduce')
+const { transform } = require('./transform')
 
-const collect = () => reduce((a, c) => {
-	a.push(c)
-	return a
+const collectArray = () => reduce((parts, value) => {
+	parts.push(value)
+	return parts
 }, [])
 
-module.exports = { collect }
+const collectString = () => [
+	transform((str) => [ str ]),
+	reduce((parts, value) => {
+		parts.push(value)
+		return parts
+	}, []),
+	transform((parts) => [ parts.join('') ]),
+]
+
+const collectBuffer = () => [
+	transform((buf) => [ buf ]),
+	reduce((parts, value) => {
+		parts.push(value)
+		return parts
+	}, []),
+	transform((parts) => [ Buffer.concat(parts) ]),
+]
+
+module.exports = {
+	collectArray,
+	collectString,
+	collectBuffer,
+}

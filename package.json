@@ -4,19 +4,20 @@
   "description": "pipes",
   "repository": {
     "type": "git",
-    "url": "git@github.com:kmamal/pipes.git"
+    "url": "git+ssh://git@github.com:kmamal/pipes.git"
   },
   "scripts": {
-    "test": "./scripts/run-tests.sh",
+    "test": "npx -p @kmamal/testing testing",
     "update-exports": "node ./scripts/update-exports.mjs"
   },
   "license": "MIT",
   "dependencies": {
-    "@kmamal/async": "^0.0.3",
-    "@kmamal/util": "^0.1.11"
+    "@kmamal/async": "^0.0.9",
+    "@kmamal/chunk-list": "^0.0.3",
+    "@kmamal/util": "^0.2.18"
   },
   "devDependencies": {
-    "@kmamal/testing": "^0.0.21"
+    "@kmamal/testing": "^0.0.30"
   },
   "main": "./src/index.js",
   "exports": {
@@ -37,6 +38,7 @@
     "./operators/eager": "./src/operators/eager.js",
     "./operators/debug": "./src/operators/debug.js",
     "./operators/collect": "./src/operators/collect.js",
+    "./operators/take": "./src/operators/take.js",
     "./operators/tap": "./src/operators/tap.js",
     "./operators/scan": "./src/operators/scan.js",
     "./pipeline": "./src/pipeline.js",

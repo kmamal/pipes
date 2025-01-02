@@ -83,24 +83,23 @@ class Node extends EventEmitter {
 
 	async _propagateCloseUpstream (from) {
 		if (!this[kSrc] || this[kSrc] === from) { return }
-		await this[kReadPromise]
 		await this[kSrc]._closeFrom(this)
 	}
 
 	async _propagateCloseDownstream (from) {
 		if (!this[kDst] || this[kDst] === from) { return }
-		await this[kWritePromise]
 		await this[kDst]._closeFrom(this)
 	}
 
 	async _closeFrom (from) {
+		if (!await this._isOpened()) { return }
+		this[kState] = 'closing'
+		await this[kReadPromise]
 		await this._propagateCloseUpstream(from)
-		if (!this[kError] && this[kState] === 'opened') {
-			this[kState] = 'closing'
-			await this[kCloseHook]?.(from)
-			this[kState] = 'closed'
-		}
+		await this[kWritePromise]
+		await this[kCloseHook]?.(from)
 		await this._propagateCloseDownstream(from)
+		this[kState] = 'closed'
 	}
 
 	async close () {
@@ -127,11 +126,8 @@ class Node extends EventEmitter {
 
 	async _propagateRead (n) {
 		if (n <= 0) { return }
-		if (this[kState] === 'opening') { await this[kOpenPromise] }
-		this[kReadPromise] = this[kReadPromise].then(async () => {
-			await this[kSrc]?.read(n)
-		})
-		await this._readPromise
+		if (!await this._shouldHandleReads()) { return }
+		await this[kSrc]?.read(n)
 	}
 
 	async [kReadHook] (n) {
@@ -140,26 +136,17 @@ class Node extends EventEmitter {
 
 	async read (n) {
 		if (n <= 0) { return }
-		if (false
-			|| this[kError]
-			|| this[kState] === 'closed'
-			|| this[kState] === 'closing'
-		) { return }
-
-		if (this[kState] === 'opening') { await this[kOpenPromise] }
-
+		if (!await this._shouldHandleReads()) { return }
 		await (this[kReadPromise] = this[kReadPromise].then(async () => {
+			if (!await this._shouldHandleReads()) { return }
 			await this[kReadHook](n)
 		}))
 	}
 
 	async _propagateWrite (data) {
 		if (data.length === 0) { return }
-		if (this[kState] === 'opening') { await this[kOpenPromise] }
-		this[kWritePromise] = this[kWritePromise].then(async () => {
-			await this[kDst]?.write(data)
-		})
-		await this._writePromise
+		if (!await this._shouldHandleWrites()) { return }
+		await this[kDst]?.write(data)
 	}
 
 	async [kWriteHook] (data) {
@@ -168,15 +155,25 @@ class Node extends EventEmitter {
 
 	async write (data) {
 		if (data.length === 0) { return }
-		if (false
-			|| this[kError]
-			|| this[kState] === 'closed'
-			|| this[kState] === 'closing'
-		) { return }
-
+		if (!await this._shouldHandleWrites()) { return }
 		await (this[kWritePromise] = this[kWritePromise].then(async () => {
+			if (!await this._shouldHandleWrites()) { return }
 			await this[kWriteHook](data)
 		}))
+	}
+
+	async _isOpened () {
+		if (this[kState] === 'opening') { await this[kOpenPromise] }
+		return !this[kError] && this[kState] === 'opened'
+	}
+
+	async _shouldHandleReads () { return await this._isOpened() }
+
+	async _shouldHandleWrites () {
+		if (this[kState] === 'opening') { await this[kOpenPromise] }
+		return !this[kError] && (
+			this[kState] === 'opened' || this[kState] === 'closing'
+		)
 	}
 }
 

@@ -12,7 +12,7 @@ class ReadFileSourceNode extends Node {
 
 	async [SYM.kOpenHook] () {
 		this._file = this._options?.file
-			?? await Fs.promises.open(this._path, this._options?.flags ?? 'r')
+		?? await Fs.promises.open(this._path, this._options?.flags ?? 'r')
 		this._position = 0
 	}
 
@@ -38,7 +38,7 @@ class ReadFileSourceNode extends Node {
 		this._position += bytesRead
 		const encoding = this._options?.encoding
 		const data = encoding ? _data.toString(encoding) : _data
-		await this.write(data)
+		this._propagateWrite(data)
 	}
 }
 

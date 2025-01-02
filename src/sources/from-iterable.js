@@ -5,8 +5,8 @@ class IterableSourceNode extends Node {
 		super()
 		this._iterable = iterable
 		this._makeIterator = null
-			?? iterable[Symbol.iterator]
-			?? iterable[Symbol.asyncIterator]
+		?? iterable[Symbol.iterator]
+		?? iterable[Symbol.asyncIterator]
 	}
 
 	[SYM.kOpenHook] () {
@@ -36,7 +36,8 @@ class IterableSourceNode extends Node {
 		}
 
 		await this._propagateWrite(values)
-		if (done) { await this.close() }
+
+		if (done) { this.close() }
 	}
 }
 

@@ -1,6 +1,5 @@
 const { Node, SYM } = require('../node')
 const { scan: scanArray } = require('@kmamal/util/array/scan')
-const { last } = require('@kmamal/util/array/last')
 
 class ScanOperatorNode extends Node {
 	constructor (fnReduce, initial) {
@@ -11,7 +10,7 @@ class ScanOperatorNode extends Node {
 
 	async [SYM.kWriteHook] (data) {
 		const scanned = scanArray.$$$(data, this._fnReduce, this._acc)
-		this._acc = last(scanned)
+		this._acc = scanned.at(-1)
 		await this._propagateWrite(scanned)
 	}
 }

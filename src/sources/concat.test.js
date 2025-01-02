@@ -1,7 +1,7 @@
 const { test } = require('@kmamal/testing')
 const { concat } = require('./concat')
 const { fromIterable } = require('./from-iterable')
-const { collect } = require('../operators/collect')
+const { collectArray } = require('../operators/collect')
 const { pipeline } = require('../pipeline')
 
 test("sources.concat", async (t) => {
@@ -10,6 +10,6 @@ test("sources.concat", async (t) => {
 			fromIterable([ 1, 2, 3 ]),
 			fromIterable([ 4, 5, 6 ]),
 		]),
-		collect(),
+		collectArray(),
 	]), [ 1, 2, 3, 4, 5, 6 ])
 })

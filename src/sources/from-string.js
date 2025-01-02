@@ -8,7 +8,7 @@ class StringSourceNode extends Node {
 
 	async [SYM.kReadHook] () {
 		await this._propagateWrite(this._string)
-		await this.close()
+		this.close()
 	}
 }
 

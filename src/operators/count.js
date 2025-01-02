@@ -1,6 +1,4 @@
 const { Node, SYM } = require('../node')
-const { pipe } = require('../pipe')
-const { EagerOperatorNode } = require('./eager')
 
 class CountOperatorNode extends Node {
 	constructor () {
@@ -9,7 +7,7 @@ class CountOperatorNode extends Node {
 	}
 
 	async [SYM.kCloseHook] () {
-		await this._propagateWrite(this._count)
+		await this._propagateWrite([ this._count ])
 	}
 
 	[SYM.kWriteHook] (data) {
@@ -17,11 +15,8 @@ class CountOperatorNode extends Node {
 	}
 }
 
-const count = () => (src) => pipe([
-	src,
-	new EagerOperatorNode(),
-	new CountOperatorNode(),
-])
+const count = () =>
+	(src) => src.pipe(new CountOperatorNode())
 
 module.exports = {
 	CountOperatorNode,

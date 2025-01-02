@@ -7,12 +7,12 @@ class EagerOperatorNode extends Node {
 	}
 
 	[SYM.kOpenHook] () {
-		this._propagateRead(this._readSize)
+		this.read(this._readSize)
 	}
 
 	async [SYM.kWriteHook] (data) {
 		await this._propagateWrite(data)
-		this._propagateRead(this._readSize)
+		this.read(this._readSize)
 	}
 }
 

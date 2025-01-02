@@ -2,8 +2,7 @@ const { Node, SYM } = require('../node')
 
 class FirstOperatorNode extends Node {
 	async [SYM.kWriteHook] (data) {
-		const value = Array.isArray(data) ? data.slice(0, 1) : data
-		await this._propagateWrite(value)
+		await this._propagateWrite(data.slice(0, 1))
 		this.close()
 	}
 }

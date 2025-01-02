@@ -1,6 +1,4 @@
 const { Node, SYM } = require('../node')
-const { pipe } = require('../pipe')
-const { EagerOperatorNode } = require('./eager')
 
 class LastOperatorNode extends Node {
 	constructor () {
@@ -15,15 +13,12 @@ class LastOperatorNode extends Node {
 	}
 
 	[SYM.kWriteHook] (data) {
-		this._lastData = Array.isArray(data) ? data.slice(-1) : data
+		this._lastData = data.slice(-1)
 	}
 }
 
-const last = () => (src) => pipe([
-	src,
-	new EagerOperatorNode(),
-	new LastOperatorNode(),
-])
+const last = () =>
+	(src) => src.pipe(new LastOperatorNode())
 
 module.exports = {
 	LastOperatorNode,

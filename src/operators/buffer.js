@@ -4,8 +4,7 @@ const {
 	ArrayChunkList,
 	BufferChunkList,
 	StringChunkList,
-} = require('@kmamal/structs/chunk-list')
-const { sleep } = require('@kmamal/util/promise/sleep')
+} = require('@kmamal/chunk-list')
 
 const byType = {
 	array: ArrayChunkList,
@@ -25,7 +24,7 @@ class BufferOperatorNode extends Node {
 	}
 
 	[SYM.kOpenHook] () {
-		sleep(0).then(() => { this._propagateRead(this._prefill) })
+		this._propagateRead(this._prefill)
 	}
 
 	async [SYM.kCloseHook] () {

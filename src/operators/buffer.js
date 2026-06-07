@@ -12,13 +12,14 @@ const byType = {
 	string: StringChunkList,
 }
 const makeBuffer = (type) => new byType[type]()
+const { defaultReadSize } = require('../constants')
 
 
 class BufferOperatorNode extends Node {
 	constructor (options) {
 		super()
 		this._type = options?.type
-		this._prefill = options?.prefill ?? 4096
+		this._prefill = options?.prefill ?? defaultReadSize
 		if (this._type) { this._buffer = makeBuffer(this._type) }
 		this._numPending = 0
 	}

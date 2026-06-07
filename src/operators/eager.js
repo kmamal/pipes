@@ -1,7 +1,8 @@
 const { Node, SYM } = require('../node')
+const { defaultReadSize } = require('../constants')
 
 class EagerOperatorNode extends Node {
-	constructor (readSize = 4096) {
+	constructor (readSize = defaultReadSize) {
 		super()
 		this._readSize = readSize
 	}

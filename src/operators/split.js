@@ -1,7 +1,8 @@
 const { Node, SYM } = require('../node')
+const { defaultReadSize } = require('../constants')
 
 class SplitOperatorNode extends Node {
-	constructor (pattern, readSize = 4096) {
+	constructor (pattern, readSize = defaultReadSize) {
 		super()
 		this._pattern = pattern
 		this._buffer = ''

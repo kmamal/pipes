@@ -5,8 +5,8 @@ class IterableSourceNode extends Node {
 		super()
 		this._iterable = iterable
 		this._makeIterator = null
-		?? iterable[Symbol.iterator]
-		?? iterable[Symbol.asyncIterator]
+			?? iterable[Symbol.iterator]
+			?? iterable[Symbol.asyncIterator]
 	}
 
 	[SYM.kOpenHook] () {
@@ -23,13 +23,13 @@ class IterableSourceNode extends Node {
 
 	async [SYM.kReadHook] (n) {
 		const values = new Array(n)
-		let done
-		let value
+		let shouldClose = false
 
 		for (let i = 0; i < n; i++) {
-			({ done, value } = await this._iterator.next())
+			const { done, value } = await this._iterator.next()
 			if (done) {
 				values.length = i
+				shouldClose = true
 				break
 			}
 			values[i] = value
@@ -37,7 +37,7 @@ class IterableSourceNode extends Node {
 
 		await this._propagateWrite(values)
 
-		if (done) { this.close() }
+		if (shouldClose) { this.close() }
 	}
 }
 

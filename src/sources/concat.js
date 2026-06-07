@@ -1,9 +1,9 @@
 const { Node, SYM } = require('../node')
-const { EmptyNode } = require('./empty')
+const { EmptySourceNode } = require('./empty')
 
 class ConcatSourceNode extends Node {
 	constructor (nodes) {
-		if (nodes.length === 0) { return new EmptyNode() }
+		if (nodes.length === 0) { return new EmptySourceNode() }
 		super()
 		this._nodes = nodes
 		this._index = 0

@@ -41,9 +41,9 @@ class DebugOperatorNode extends Node {
 		await super.error(error)
 	}
 
-	read (n) {
+	async read (n) {
 		console.log(`[${this._name}] read ${n}`)
-		super.read(n)
+		await super.read(n)
 	}
 
 	async write (data) {

@@ -1,6 +1,6 @@
 const { Node, SYM } = require('../node')
 const { pipe } = require('../pipe')
-const { LastNode } = require('../operators/last')
+const { LastOperatorNode } = require('../operators/last')
 const { Future } = require('@kmamal/async/future')
 
 class PromiseSinkNode extends Node {
@@ -28,7 +28,7 @@ class PromiseSinkNode extends Node {
 const toPromise = async (src) => {
 	const promiseNode = await pipe([
 		src,
-		new LastNode(),
+		new LastOperatorNode(),
 		new PromiseSinkNode(),
 	])
 	return promiseNode.promise

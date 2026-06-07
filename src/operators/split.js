@@ -21,7 +21,8 @@ class SplitOperatorNode extends Node {
 		this._buffer = parts.pop()
 		if (parts.length === 0) {
 			await this._propagateRead(4096)
-		} else {
+		}
+		else {
 			await this._propagateWrite(parts)
 		}
 	}

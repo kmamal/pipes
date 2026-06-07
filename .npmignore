@@ -1,5 +1,6 @@
 scripts
-	**/*.test.js
-	**/testing/
-	**/_*
-	package.json~
+**/*.test.js
+**/*.benchmark.js
+**/testing/
+**/benchmarking/
+**/_*

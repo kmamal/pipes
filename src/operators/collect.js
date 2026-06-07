@@ -8,19 +8,13 @@ const collectArray = () => reduce((parts, value) => {
 
 const collectString = () => [
 	transform((str) => [ str ]),
-	reduce((parts, value) => {
-		parts.push(value)
-		return parts
-	}, []),
+	collectArray(),
 	transform((parts) => [ parts.join('') ]),
 ]
 
 const collectBuffer = () => [
 	transform((buf) => [ buf ]),
-	reduce((parts, value) => {
-		parts.push(value)
-		return parts
-	}, []),
+	collectArray(),
 	transform((parts) => [ Buffer.concat(parts) ]),
 ]
 

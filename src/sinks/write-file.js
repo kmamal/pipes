@@ -1,5 +1,5 @@
 const { Node, SYM } = require('../node')
-const Fs = require('fs')
+const Fs = require('node:fs')
 
 class WriteFileSinkNode extends Node {
 	constructor (path, options) {
@@ -26,7 +26,7 @@ class WriteFileSinkNode extends Node {
 		await this._file.write(data, {
 			position: this._position,
 		})
-		this._position += Buffer.length
+		this._position += data.length
 	}
 }
 

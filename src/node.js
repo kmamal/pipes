@@ -12,6 +12,7 @@ const kOpenHook = Symbol("open hook")
 const kCloseHook = Symbol("close hook")
 const kReadHook = Symbol("read hook")
 const kWriteHook = Symbol("write hook")
+const kErrorHook = Symbol("error hook")
 
 const kErrorNode = Symbol("node")
 
@@ -30,6 +31,7 @@ class Node extends EventEmitter {
 			if (hooks.close) { this[kCloseHook] = hooks.close }
 			if (hooks.read) { this[kReadHook] = hooks.read }
 			if (hooks.write) { this[kWriteHook] = hooks.write }
+			if (hooks.error) { this[kErrorHook] = hooks.error }
 		}
 	}
 
@@ -107,6 +109,7 @@ class Node extends EventEmitter {
 	}
 
 	async _doError (error) {
+		await this[kErrorHook]?.(error)
 		this.emit('error', error)
 		await this.close()
 	}
@@ -190,5 +193,6 @@ module.exports = {
 		kCloseHook,
 		kReadHook,
 		kWriteHook,
+		kErrorHook,
 	},
 }

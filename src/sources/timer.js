@@ -5,7 +5,7 @@ class TimerSourceNode extends Node {
 		super()
 
 		this._timeout = timeout
-		this._interval = interval
+		this._interval = interval ?? timeout
 		this._timeoutId = null
 		this._counter = 0
 	}

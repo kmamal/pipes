@@ -1,5 +1,5 @@
 const { Node, SYM } = require('../node')
-const Fs = require('fs')
+const Fs = require('node:fs')
 
 class ReadFileSourceNode extends Node {
 	constructor (path, options) {
@@ -38,7 +38,7 @@ class ReadFileSourceNode extends Node {
 		this._position += bytesRead
 		const encoding = this._options?.encoding
 		const data = encoding ? _data.toString(encoding) : _data
-		this._propagateWrite(data)
+		await this._propagateWrite(data)
 	}
 }
 

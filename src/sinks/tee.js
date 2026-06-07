@@ -30,7 +30,9 @@ class TeeSinkNode extends Node {
 			},
 			close: () => {
 				this._dummies.delete(dummy)
-				this._maxBalance = max([ ...this._dummies.values() ].map(_getBalance))
+				this._maxBalance = this._dummies.size > 0
+					? max([ ...this._dummies.values() ].map(_getBalance))
+					: 0
 				if (--this._numOpen === 0) { this.close() }
 			},
 		})
@@ -64,11 +66,11 @@ class TeeSinkNode extends Node {
 
 	async _propagateWrite (data) {
 		const { length } = data
-		await Promise.all([ ...this._dummies.entries() ]
-			.map(async ([ dummy, nodeInfo ]) => {
+		await Promise.all([ ...this._dummies.values() ]
+			.map(async (dummy) => {
 				if (dummy[SYM.kState] !== 'opened') { return }
 				await dummy.write(data)
-				nodeInfo.balance = Math.max(nodeInfo.balance - length)
+				dummy.balance = Math.max(0, dummy.balance - length)
 			}))
 		this._maxBalance -= length
 	}

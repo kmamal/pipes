@@ -6,20 +6,19 @@
     "type": "git",
     "url": "git+ssh://git@github.com:kmamal/pipes.git"
   },
+  "license": "MIT",
   "scripts": {
     "test": "npx -p @kmamal/testing testing",
     "update-exports": "node ./scripts/update-exports.mjs"
   },
-  "license": "MIT",
   "dependencies": {
-    "@kmamal/async": "^0.0.9",
-    "@kmamal/chunk-list": "^0.0.3",
-    "@kmamal/util": "^0.2.18"
+    "@kmamal/async": "0.0.9",
+    "@kmamal/chunk-list": "0.0.3",
+    "@kmamal/util": "0.2.18"
   },
   "devDependencies": {
-    "@kmamal/testing": "^0.0.30"
+    "@kmamal/testing": "0.0.30"
   },
-  "main": "./src/index.js",
   "exports": {
     "./pipe": "./src/pipe.js",
     "./node": "./src/node.js",
@@ -54,5 +53,6 @@
     "./sources/read-file": "./src/sources/read-file.js",
     "./sources/from-iterable": "./src/sources/from-iterable.js",
     "./sources/empty": "./src/sources/empty.js"
-  }
+  },
+  "main": "./src/index.js"
 }

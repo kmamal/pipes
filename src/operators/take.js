@@ -7,7 +7,7 @@ class TakeOperatorNode extends Node {
 	}
 
 	async [SYM.kWriteHook] (data) {
-		const value = Array.isArray(data) ? data.slice(0, this._remaining) : data
+		const value = data.slice(0, this._remaining)
 		await this._propagateWrite(value)
 		this._remaining -= value.length
 		if (this._remaining === 0) { this.close() }

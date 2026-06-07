@@ -3,9 +3,9 @@ const { EagerOperatorNode } = require("./operators/eager")
 const { LastOperatorNode } = require("./operators/last")
 const { PromiseSinkNode } = require("./sinks/to-promise")
 
-const pipeline = async (nodes) => {
+const pipeline = async (nodes, readSize) => {
 	const promiseNode = await _makeConnections(nodes[0], [
-		new EagerOperatorNode(),
+		new EagerOperatorNode(readSize),
 		...nodes.slice(1),
 		new LastOperatorNode(),
 		new PromiseSinkNode(),

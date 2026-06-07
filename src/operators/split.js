@@ -1,10 +1,11 @@
 const { Node, SYM } = require('../node')
 
 class SplitOperatorNode extends Node {
-	constructor (pattern) {
+	constructor (pattern, readSize = 4096) {
 		super()
 		this._pattern = pattern
 		this._buffer = ''
+		this._readSize = readSize
 	}
 
 	async [SYM.kCloseHook] () {
@@ -12,7 +13,7 @@ class SplitOperatorNode extends Node {
 	}
 
 	async [SYM.kReadHook] () {
-		await this._propagateRead(4096)
+		await this._propagateRead(this._readSize)
 	}
 
 	async [SYM.kWriteHook] (data) {
@@ -20,7 +21,7 @@ class SplitOperatorNode extends Node {
 		const parts = this._buffer.split(this._pattern)
 		this._buffer = parts.pop()
 		if (parts.length === 0) {
-			await this._propagateRead(4096)
+			this._propagateRead(this._readSize)
 		}
 		else {
 			await this._propagateWrite(parts)
@@ -28,8 +29,8 @@ class SplitOperatorNode extends Node {
 	}
 }
 
-const split = (pattern) =>
-	(src) => src.pipe(new SplitOperatorNode(pattern))
+const split = (pattern, readSize) =>
+	(src) => src.pipe(new SplitOperatorNode(pattern, readSize))
 
 module.exports = {
 	SplitOperatorNode,

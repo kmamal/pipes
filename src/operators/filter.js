@@ -11,7 +11,7 @@ class FilterOperatorNode extends Node {
 		const { length } = data
 		filterArray.$$$(data, this._fnFilter)
 		await this._propagateWrite(data)
-		if (data.length === 0) { await this._propagateRead(length) }
+		if (data.length === 0) { this._propagateRead(length) }
 	}
 }
 

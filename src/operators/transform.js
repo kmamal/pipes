@@ -10,7 +10,7 @@ class TransformOperatorNode extends Node {
 		const { length } = data
 		const transformed = this._fnTransform(data)
 		await this._propagateWrite(transformed)
-		if (transformed.length === 0) { await this._propagateRead(length) }
+		if (transformed.length === 0) { this._propagateRead(length) }
 	}
 }
 
